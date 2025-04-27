@@ -8,6 +8,7 @@ import tempfile
 import playsound
 import time
 import queue
+import pygame
 
 load_dotenv()
 api_key = os.getenv("OPENAI_API_KEY")
@@ -51,7 +52,7 @@ def listen_and_record():
     audio_frames = []
 
     with sd.InputStream(callback=audio_callback, samplerate=samplerate, channels=channels, blocksize=int(samplerate * block_duration)):
-        print("🟢 마이크 ON (Listening)")
+        print("마이크 ON (Listening)")
 
         while not speaking:
             time.sleep(0.01)
@@ -61,7 +62,7 @@ def listen_and_record():
                 frame = audio_q.get(timeout=1.0)
                 audio_frames.append(frame)
         except queue.Empty:
-            print("🔴 말 끝 감지. 녹음 종료.")
+            print("말 끝 감지. 녹음 종료.")
 
     if audio_frames:
         recording = np.concatenate(audio_frames, axis=0)
@@ -72,7 +73,7 @@ def listen_and_record():
 
 def transcribe_recording(recording, samplerate=16000):
     if recording is None:
-        print("❗ 녹음 데이터가 없습니다.")
+        print("녹음 데이터가 없습니다.")
         return None
 
     with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as temp_wav:
@@ -84,7 +85,7 @@ def transcribe_recording(recording, samplerate=16000):
                 file=audio_file
             )
             text = transcript.text
-            print(f"📝 인식된 텍스트: {text}")
+            print(f"인식된 텍스트: {text}")
             return text
 
 def gpt4_response(prompt_text):
@@ -112,8 +113,16 @@ def speak_with_openai_tts(text):
         with open(temp_filename, "wb") as f:
             f.write(response.content)
         
-        playsound.playsound(temp_filename)
+        pygame.mixer.init()
+        pygame.mixer.music.load(temp_filename)
+        pygame.mixer.music.play()
+
+        while pygame.mixer.music.get_busy():
+            pygame.time.Clock().tick(10)
+        
+        pygame.mixer.quit()
         os.remove(temp_filename)
+
     except Exception as e:
         print(f"[TTS 출력 에러] {e}")
 
