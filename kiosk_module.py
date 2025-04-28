@@ -91,7 +91,7 @@ def transcribe_recording(recording, samplerate=16000):
 def gpt4_response(prompt_text):
     try:
         response = client.chat.completions.create(
-            model="gpt-4",
+            model="gpt-4o",
             messages=[
                 {"role": "system", "content": "너는 친절하고 자연스러운 키오스크 비서야."},
                 {"role": "user", "content": prompt_text}
@@ -99,7 +99,7 @@ def gpt4_response(prompt_text):
         )
         return response.choices[0].message.content
     except Exception as e:
-        print(f"[GPT-4 응답 에러] {e}")
+        print(f"[GPT-4o 응답 에러] {e}")
         return None
 
 def speak_with_openai_tts(text):
@@ -141,7 +141,7 @@ def main():
 
     print(f"인식된 텍스트: {stt_text}")
 
-    print("GPT-4 응답 생성 중...")
+    print("GPT-4o 응답 생성 중...")
     gpt_reply = gpt4_response(stt_text)
 
     if gpt_reply is None:
