@@ -5,7 +5,6 @@ import sounddevice as sd
 import numpy as np
 import scipy.io.wavfile
 import tempfile
-import playsound
 import time
 import queue
 import pygame
