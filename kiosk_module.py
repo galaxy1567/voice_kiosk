@@ -8,6 +8,7 @@ import scipy.io.wavfile
 import openai
 import pygame
 from dotenv import load_dotenv
+import NFC_tool
 
 # 환경 설정
 load_dotenv()
@@ -165,6 +166,13 @@ def main():
 
     if "종료" in stt_text or "끝내자" in stt_text:
         return "종료"
+    
+    if "알러지" in stt_text or "알레르기" in stt_text:
+        print("NFC를 통해 알러지 정보를 확인합니다...")
+        allergy_info = NFC_tool.READ_NFC()
+        print(f"알러지 결과: {allergy_info}")
+        speak_with_openai_tts(client, f"알러지 확인 결과: {allergy_info}")
+        return stt_text
 
     chat_history.append({"role": "user", "content": stt_text})
 

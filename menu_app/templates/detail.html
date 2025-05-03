@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ menu_item.name }} - 상세정보</title>
+  <style>
+    body {
+      font-family: 'Nanum Gothic', Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f8f9fa;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+    .menu-image {
+      height: 300px;
+      background-position: center;
+      background-size: cover;
+      background-repeat: no-repeat;
+    }
+    .menu-content {
+      padding: 30px;
+    }
+    .menu-name {
+      font-size: 28px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #343a40;
+    }
+    .menu-price {
+      color: #dc3545;
+      font-weight: bold;
+      font-size: 20px;
+      margin-bottom: 20px;
+    }
+    .menu-description {
+      color: #495057;
+      font-size: 16px;
+      line-height: 1.6;
+      margin-bottom: 30px;
+    }
+    .allergy-section {
+      margin-top: 30px;
+      border-top: 1px solid #e9ecef;
+      padding-top: 20px;
+    }
+    .allergy-title {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 15px;
+      color: #343a40;
+    }
+    .allergy-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 30px;
+    }
+    .allergy-item {
+      background-color: #f8d7da;
+      color: #721c24;
+      padding: 8px 15px;
+      border-radius: 20px;
+      font-size: 14px;
+    }
+    .back-button {
+      display: inline-block;
+      background-color: #6c757d;
+      color: white;
+      text-decoration: none;
+      padding: 12px 25px;
+      border-radius: 5px;
+      font-size: 16px;
+      transition: background-color 0.3s;
+      margin-top: 20px;
+    }
+    .back-button:hover {
+      background-color: #5a6268;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="menu-image" style="background-image: url('{{ menu_item.image_url }}')"></div>
+    <div class="menu-content">
+      <div class="menu-name">{{ menu_item.name }}</div>
+      <div class="menu-price">{{ menu_item.price }}원</div>
+      <div class="menu-description">{{ menu_item.description }}</div>
+      <div class="allergy-section">
+        <div class="allergy-title">알레르기 정보</div>
+        <div class="allergy-list">
+          {% if menu_item.allergies %}
+            {% for allergy in menu_item.allergies %}
+              <div class="allergy-item">{{ allergy }}</div>
+            {% endfor %}
+          {% else %}
+            <p>알레르기 유발 성분이 없습니다.</p>
+          {% endif %}
+        </div>
+      </div>
+      <a href="{{ url_for('index') }}" class="back-button">뒤로 가기</a>
+    </div>
+  </div>
+</body>
+</html>

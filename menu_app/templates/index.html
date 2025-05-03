@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>음식 메뉴판</title>
+  <style>
+    /* ── 링크 전역 스타일 ── */
+    a,
+    .allergy-link,
+    .allergy-link:link,
+    .allergy-link:visited {
+      text-decoration: none;
+      color: inherit; /* 부모 컬러 상속 */
+    }
+    .allergy-link:hover,
+    .allergy-link:active {
+      color: #343a40;
+    }
+
+    /* ── 알레르기 리스트 전용 ── */
+    .allergy-item {
+      margin-bottom: 8px;
+      background-color: #e9ecef;
+      border-radius: 5px;
+      transition: background-color 0.3s;
+    }
+    .allergy-item:hover {
+      background-color: #dee2e6;
+    }
+    .allergy-item.active {
+      background-color: #f8d7da;
+      color: #721c24;
+      font-weight: bold;
+    }
+    /* a 태그를 li 전체를 채우도록 */
+    .allergy-item .allergy-link {
+      display: block;
+      width: 100%;
+      height: 100%;
+      padding: 10px 15px;
+      box-sizing: border-box;
+    }
+
+    /* ── 나머지 기존 스타일 ── */
+    body {
+      font-family: 'Nanum Gothic', Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f8f9fa;
+    }
+    .page-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto 30px;
+    }
+    h1 {
+      color: #343a40;
+      margin: 0;
+      padding-bottom: 15px;
+      border-bottom: 2px solid #e9ecef;
+    }
+    .button-group {
+      display: flex;
+      gap: 12px;
+    }
+    .add-button {
+      background-color: #2f9e44;
+      color: #fff;
+      padding: 10px 22px;
+      border-radius: 6px;
+      font-size: 15px;
+      transition: background-color 0.3s;
+    }
+    .add-button:hover { background-color: #248f3f; }
+    .change-button {
+      background-color: #f0ad4e;
+      color: #fff;
+      padding: 10px 22px;
+      border-radius: 6px;
+      font-size: 15px;
+      transition: background-color 0.3s;
+    }
+    .change-button:hover { background-color: #ec9a2d; }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      display: flex;
+      gap: 30px;
+    }
+    .sidebar {
+      width: 250px;
+      flex-shrink: 0;
+    }
+    .main-content {
+      flex-grow: 1;
+    }
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 25px;
+    }
+    .menu-item {
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+    }
+    .menu-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+    }
+    .menu-image {
+      height: 180px;
+      background-position: center;
+      background-size: cover;
+      background-repeat: no-repeat;
+    }
+    .menu-content {
+      padding: 20px;
+    }
+    .menu-name {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 8px;
+      color: #343a40;
+    }
+    .menu-price {
+      color: #dc3545;
+      font-weight: bold;
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+    .menu-description {
+      color: #6c757d;
+      font-size: 14px;
+      margin-bottom: 10px;
+      height: 40px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+    .view-details {
+      display: inline-block;
+      background-color: #007bff;
+      color: white;
+      padding: 8px 15px;
+      border-radius: 5px;
+      font-size: 14px;
+      text-align: center;
+      width: 100%;
+      box-sizing: border-box;
+      transition: background-color 0.3s;
+    }
+    .view-details:hover {
+      background-color: #0056b3;
+    }
+    .category-title {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 15px;
+      color: #343a40;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #e9ecef;
+    }
+    .allergy-list {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+    }
+    .filter-notice-enhanced {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 20px;
+      background-color: #ffe0e0;
+      border-left: 5px solid #dc3545;
+      border-radius: 5px;
+      padding: 10px 15px;
+      white-space: nowrap;
+    }
+    .filter-label {
+      color: #c82333;
+      font-weight: bold;
+      font-size: 14px;
+    }
+    .clear-filter-enhanced {
+      background-color: #c82333;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 13px;
+      transition: background-color 0.3s;
+    }
+    .clear-filter-enhanced:hover {
+      background-color: #a71d2a;
+    }
+    .no-menu {
+      text-align: center;
+      padding: 50px 0;
+      color: #6c757d;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <div class="page-title">
+    <h1>음식 메뉴판</h1>
+    <div class="button-group">
+      <a href="/add" class="add-button">+ 음식 추가</a>
+      <a href="/change-password" class="change-button">비밀번호 변경</a>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="sidebar">
+      <div class="category-title">알레르기 카테고리</div>
+      <ul class="allergy-list">
+        {% for allergy in allergies %}
+          <li class="allergy-item{% if selected_allergy == allergy %} active{% endif %}">
+            <a href="/?allergy={{ allergy }}" class="allergy-link">{{ allergy }}</a>
+          </li>
+        {% endfor %}
+      </ul>
+      {% if selected_allergy %}
+        <div class="filter-notice-enhanced">
+          <span class="filter-label">"{{ selected_allergy }}" 필터링 중</span>
+          <a href="/" class="clear-filter-enhanced">초기화</a>
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="main-content">
+      {% if menu_items %}
+        <div class="menu-grid">
+          {% for item in menu_items %}
+            <a href="{{ url_for('menu_detail', menu_id=item.id) }}">
+              <div class="menu-item">
+                <div class="menu-image" style="background-image: url('{{ item.image_url }}')"></div>
+                <div class="menu-content">
+                  <div class="menu-name">{{ item.name }}</div>
+                  <div class="menu-price">{{ item.price }}원</div>
+                  <div class="menu-description">{{ item.description }}</div>
+                  <div class="view-details">상세정보 보기</div>
+                </div>
+              </div>
+            </a>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="no-menu">"{{ selected_allergy }}"에 해당하는 메뉴가 없습니다.</div>
+      {% endif %}
+    </div>
+  </div>
+</body>
+</html>
