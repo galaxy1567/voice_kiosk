@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>AI 키오스크</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 40px;
+      background-color: #f9f9f9;
+    }
+    h1 { color: #333; }
+    form { margin-bottom: 20px; }
+    input[type="text"] {
+      width: 300px;
+      padding: 10px;
+      font-size: 16px;
+    }
+    button {
+      padding: 10px 15px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .menu, .cart {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-top: 20px;
+    }
+    .card {
+      background-color: white;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 15px;
+      width: 200px;
+      box-shadow: 2px 2px 8px rgba(0,0,0,0.05);
+    }
+    .card img {
+      width: 100%;
+      height: 130px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+    .card h3 { margin: 10px 0 5px; font-size: 18px; }
+    .card p { margin: 5px 0; font-size: 14px; }
+    .info {
+      margin-bottom: 20px;
+      padding: 10px;
+      background-color: #eef;
+      border-left: 4px solid #88f;
+    }
+    .section-title {
+      margin-top: 40px;
+      font-size: 22px;
+      border-bottom: 2px solid #ccc;
+    }
+    .quantity-control a {
+      margin: 0 5px;
+      text-decoration: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>🤖 AI 키오스크</h1>
+
+  <form method="POST" action="/">
+    <input type="text" name="message" placeholder="예: 계란 없는 메뉴 / 비건 / 초기화" required />
+    <button type="submit">보내기</button>
+  </form>
+
+  {% if user_input %}
+    <div class="info">
+      🙋 <strong>사용자 요청:</strong> {{ user_input }}
+    </div>
+  {% endif %}
+
+  <h2 class="section-title">🍽️ 메뉴</h2>
+  <div class="menu">
+    {% for item in menu %}
+      <div class="card">
+        <img src="{{ url_for('static', filename=item.image) }}" alt="{{ item.name }}">
+        <h3>{{ item.name }}</h3>
+        <p>💰 {{ item.price }}원</p>
+        <p>🍃 {{ item.vegan_level }}</p>
+        <a href="{{ url_for('add_to_cart', menu_id=item.id) }}">[담기]</a>
+      </div>
+    {% endfor %}
+  </div>
+
+  <h2 class="section-title">🛒 장바구니</h2>
+  {% if cart_items %}
+    <div class="cart">
+      {% for item in cart_items %}
+        <div class="card" id="card-{{ item.id }}">
+          <img src="{{ url_for('static', filename=item.image) }}" alt="{{ item.name }}">
+          <h3>{{ item.name }}</h3>
+          <p>💰 {{ item.price }}원</p>
+          <p>🍃 {{ item.vegan_level }}</p>
+          <p>수량: <span id="qty-{{ item.id }}">{{ item.quantity }}</span></p>
+          <div class="quantity-control">
+            <a onclick="updateQuantity('{{ item.id }}', 'increase')">[➕]</a>
+            <a onclick="updateQuantity('{{ item.id }}', 'decrease')">[➖]</a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+    <br>
+    <a href="{{ url_for('clear_cart') }}">🗑️ 장바구니 비우기</a>
+  {% else %}
+    <p>장바구니가 비어 있습니다.</p>
+  {% endif %}
+
+  <script>
+    function updateQuantity(menuId, action) {
+      fetch(`/api/${action}_quantity`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ menu_id: menuId })
+      })
+      .then(res => res.json())
+      .then(data => {
+        const qtySpan = document.getElementById(`qty-${data.id}`);
+        const card = document.getElementById(`card-${data.id}`);
+        if (data.quantity === 0) {
+          if (card) card.remove();
+        } else {
+          if (qtySpan) qtySpan.innerText = data.quantity;
+        }
+      });
+    }
+  </script>
+</body>
+</html>

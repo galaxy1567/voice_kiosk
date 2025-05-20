@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>관리자 메뉴 등록</title>
+  <style>
+    body { font-family: sans-serif; padding: 30px; }
+    input, select, button { margin: 5px 0; padding: 8px; }
+    form { margin-bottom: 30px; }
+    label { display: block; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <h1>🍳 관리자 페이지</h1>
+
+  <h2>➕ 메뉴 추가</h2>
+  <form method="POST" enctype="multipart/form-data">
+    <label>이름: <input type="text" name="name" required></label>
+    <label>가격: <input type="number" name="price" required></label>
+    <label>카테고리:
+      <select name="category">
+        <option>한식</option>
+        <option>중식</option>
+        <option>양식</option>
+        <option>일식</option>
+      </select>
+    </label>
+    <label>비건 단계:
+      <select name="vegan_level">
+        <option>플렉시테리언</option>
+        <option>폴로 베지테리언</option>
+        <option>페스코 베지테리언</option>
+        <option>락토-오보 베지테리언</option>
+        <option>오보 베지테리언</option>
+        <option>락토 베지테리언</option>
+        <option>비건</option>
+        <option>프루테리언</option>
+      </select>
+    </label>
+    <label>알러지:
+      <br>
+      <input type="checkbox" name="allergy" value="eggs"> 계란
+      <input type="checkbox" name="allergy" value="milk"> 우유
+      <input type="checkbox" name="allergy" value="nuts"> 견과류
+      <input type="checkbox" name="allergy" value="soy"> 대두
+    </label>
+    <label>이미지 업로드: <input type="file" name="image" accept="image/*" required></label>
+    <button type="submit">등록</button>
+  </form>
+
+  <h2>🗑️ 메뉴 삭제</h2>
+  <ul>
+    {% for item in menu %}
+      <li>
+        {{ item.name }} ({{ item.category }}) - {{ item.price }}원
+        <form method="POST" style="display:inline;">
+          <input type="hidden" name="delete_id" value="{{ item.id }}">
+          <button type="submit">삭제</button>
+        </form>
+      </li>
+    {% endfor %}
+  </ul>
+
+  <a href="{{ url_for('index') }}">← 메인으로</a>
+</body>
+</html>

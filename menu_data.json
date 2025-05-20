@@ -1,0 +1,21 @@
+[
+    {
+      "id": 1,
+      "name": "된장찌개",
+      "price": 7000,
+      "category": "한식",
+      "image": "doenjang.jpg",
+      "allergy": ["soy"],
+      "vegan_level": "플렉시테리언"
+    },
+    {
+      "id": 2,
+      "name": "계란말이",
+      "price": 6000,
+      "category": "한식",
+      "image": "eggroll.jpg",
+      "allergy": ["eggs"],
+      "vegan_level": "비건"
+    }
+  ]
+  
